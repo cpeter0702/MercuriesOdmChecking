@@ -1,6 +1,6 @@
 package com.firsttech.insurance.odm_checking.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +13,7 @@ public class OdmPostTesterController {
 	private OdmPostTesterService odmPostTesterService;
 	
 	
+	@Autowired
 	public OdmPostTesterController (OdmPostTesterService odmPostTesterService) {
 		this.odmPostTesterService = odmPostTesterService;
 	}
