@@ -32,6 +32,10 @@ public class OdmPostTesterService {
 	}
 
 	@Scheduled(cron = "0 0/10 * * * ?")
+	public void doCronTest () {
+		doTest(null, null);
+	}
+	
 	public void doTest(String startDate, String endDate) {
 		System.out.println("preparing to do ODM reuslt checking .....");
 		
