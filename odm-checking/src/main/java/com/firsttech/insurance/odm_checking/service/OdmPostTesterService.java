@@ -10,6 +10,7 @@ public class OdmPostTesterService {
 
 	@PostConstruct
 	public void runOnceAtStartup() {
+		sendSMS();
 		doTest();
 	}
 	
@@ -22,7 +23,7 @@ public class OdmPostTesterService {
 	public void doTest() {
 		System.out.println("preparing to do ODM reuslt checking .....");
 		
-		String configPath = "D:\\EclipseSpace\\MercuriesOdmChecking\\odm-checking\\src\\main\\resources\\config.properties";
+		String configPath = "D:\\MercuriesOdmChecking\\config.properties";
 		ConfigManager config = ConfigManager.getInstance(configPath);
 		TestManager testODM = new TestManager(config);
 
