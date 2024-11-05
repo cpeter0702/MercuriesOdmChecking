@@ -178,13 +178,13 @@ public class TestManager {
 	}
 
 	private String setDateQuery(String startDate, String endDate, String target) {
-		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyyMMdd");
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String startDateStr = startDate == null ?
 				LocalDate.parse(this.date, f).format(f).toString() :
-				LocalDate.parse(startDate, f).format(f).toString();	
+				LocalDate.parse(startDate, f).format(f).toString() + " 00:00:00";	
 		String endDateStr = endDate == null ?
 				LocalDate.parse(startDateStr, f).plusDays(1).format(f).toString() :
-				LocalDate.parse(endDate, f).format(f).toString();
+				LocalDate.parse(endDate, f).format(f).toString() + " 23:59:59";
 		
 		return "SELECT policy_no, keep_date_time, " + target + "_json_in " + "FROM SITODMDB.dbo." + target + "_case_in"
 				+ " WHERE keep_date_time BETWEEN '" + startDateStr + "' AND '" + endDateStr + "'";

@@ -10,25 +10,19 @@ public class OdmPostTesterService {
 
 	@PostConstruct
 	public void runOnceAtStartup() {
+		sendEMail();
 		sendSMS();
-		doTest(null, null);
+		doCronTest();
 	}
 	
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendSMS() {
-		System.out.println("preparing to send SMS .....");
+		System.out.println("[OdmPostTesterService] preparing to send SMS .....");
 	}
 	
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendEMail() {
-		System.out.println("preparing to send EMAIL .....");
-	}
-	
-	public void doTest2() {
-		System.out.println("preparing to do ODM reuslt checking 2 .....");
-		
-		
-		
+		System.out.println("[OdmPostTesterService] preparing to send EMAIL .....");
 	}
 
 	@Scheduled(cron = "0 0/10 * * * ?")
@@ -37,7 +31,7 @@ public class OdmPostTesterService {
 	}
 	
 	public void doTest(String startDate, String endDate) {
-		System.out.println("preparing to do ODM reuslt checking .....");
+		System.out.println("[OdmPostTesterService] preparing to do ODM reuslt checking .....");
 		
 		String configPath = "D:\\MercuriesOdmChecking\\config.properties";
 		ConfigManager config = ConfigManager.getInstance(configPath);
