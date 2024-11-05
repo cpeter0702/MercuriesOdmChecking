@@ -15,11 +15,13 @@ public class OdmPostTesterService {
 	
 	@Scheduled(cron = "0 0/30 * * * ?")
 	public void sendSMS() {
-		
+		System.out.println("preparing to send SMS .....");
 	}
 
 	@Scheduled(cron = "0 0/10 * * * ?")
 	public void doTest() {
+		System.out.println("preparing to do ODM reuslt checking .....");
+		
 		String configPath = "D:\\EclipseSpace\\MercuriesOdmChecking\\odm-checking\\src\\main\\resources\\config.properties";
 		ConfigManager config = ConfigManager.getInstance(configPath);
 		TestManager testODM = new TestManager(config);
