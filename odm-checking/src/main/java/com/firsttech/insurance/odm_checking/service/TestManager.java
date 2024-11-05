@@ -47,8 +47,8 @@ public class TestManager {
 	public void executeTest(Runnable test) {
 		test.run();
 	}
-
-	public void createTest(String target) {
+	
+	public void createTest(String target, String startDate, String endDate) {
 		String odmApi = config.getProperty("odm." + target + ".origin");
 		String odmApiNew = config.getProperty("odm." + target + ".new");
 		String status = null;
@@ -56,7 +56,7 @@ public class TestManager {
 		int sFail = 0;
 		int count = 0;
 		List<Policy> policyList = new ArrayList<>();
-		String q = setDateQuery(this.date, target);
+		String q = setDateQuery(startDate, endDate, target);
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.fileName, true))) {
 			try (Connection conn = connectDB(this.url, this.user, this.pwd);
@@ -177,12 +177,25 @@ public class TestManager {
 		}
 	}
 
-	private String setDateQuery(String date, String target) {
+	private String setDateQuery(String startDate, String endDate, String target) {
 		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyyMMdd");
-		String tomorrow = LocalDate.parse(date, f).plusDays(1).format(f).toString();
+		String startDateStr = startDate == null ?
+				LocalDate.parse(this.date, f).format(f).toString() :
+				LocalDate.parse(startDate, f).format(f).toString();	
+		String endDateStr = endDate == null ?
+				LocalDate.parse(startDateStr, f).plusDays(1).format(f).toString() :
+				LocalDate.parse(endDate, f).format(f).toString();
+		
 		return "SELECT policy_no, keep_date_time, " + target + "_json_in " + "FROM SITODMDB.dbo." + target + "_case_in"
-				+ " WHERE keep_date_time BETWEEN '" + date + "' AND '" + tomorrow + "'";
+				+ " WHERE keep_date_time BETWEEN '" + startDateStr + "' AND '" + endDateStr + "'";
 	}
+	
+//	private String setDateQuery(String date, String target) {
+//		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyyMMdd");
+//		String tomorrow = LocalDate.parse(date, f).plusDays(1).format(f).toString();
+//		return "SELECT policy_no, keep_date_time, " + target + "_json_in " + "FROM SITODMDB.dbo." + target + "_case_in"
+//				+ " WHERE keep_date_time BETWEEN '" + date + "' AND '" + tomorrow + "'";
+//	}
 
 	public String getFileName() {
 		return this.fileName;
