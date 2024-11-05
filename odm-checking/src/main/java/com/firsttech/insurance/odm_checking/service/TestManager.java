@@ -178,7 +178,7 @@ public class TestManager {
 	}
 
 	private String setDateQuery(String startDate, String endDate, String target) {
-		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyyMMdd");
 		String startDateStr = startDate == null ?
 				LocalDate.parse(this.date, f).format(f).toString() :
 				LocalDate.parse(startDate, f).format(f).toString() + " 00:00:00";	
