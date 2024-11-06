@@ -1,12 +1,37 @@
 package com.firsttech.insurance.odm_checking.service;
 
+import com.firsttech.insurance.odm_checking.service.utils.HttpUtil;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+
 @Service
 public class OdmPostTesterService {
+
+	private final static Logger logger = LoggerFactory.getLogger(OdmPostTesterService.class);
+
+	@Autowired
+	private Environment environment;
+
+	@Autowired
+	private SmsService smsService;
+
+	@Autowired
+	private EmailService emailService;
 
 	@PostConstruct
 	public void runOnceAtStartup() {
@@ -14,16 +39,50 @@ public class OdmPostTesterService {
 		sendSMS();
 		doCronTest();
 	}
-	
+
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendSMS() {
-		System.out.println("[OdmPostTesterService] preparing to send SMS .....");
+		logger.info("[OdmPostTesterService] preparing to send SMS .....");
 	}
 	
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendEMail() {
-		System.out.println("[OdmPostTesterService] preparing to send EMAIL .....");
+		logger.info("[OdmPostTesterService] preparing to send EMAIL .....");
 	}
+
+	@Scheduled(cron = "0 0/5 * * * ?")
+	public void odmHealthChecking() {
+		boolean isAlive = false;
+		logger.info("[CRON JOB] start to do health checking for ODM");
+        try {
+
+			String url = environment.getProperty("odm.health.check.origin");
+            HttpResponse response = HttpUtil.httpRequestGet(url, new HashMap<>());
+			String returnBody = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == HttpStatus.OK.value()) {
+				isAlive = true;
+				logger.info("[CRON JOB] ODM is working: {}", returnBody);
+			} else {
+				logger.info("[CRON JOB] ODM is NOT working: {}", returnBody);
+
+			}
+
+        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+		if (!isAlive) {
+			boolean isSMSSuccess = smsService.sendSMSTest();
+			logger.info("[CRON JOB] 提醒簡訊發送結果: {}", isSMSSuccess ? "成功" : "失敗");
+			boolean isEmailSuccess = emailService.sendMailTest();
+			logger.info("[CRON JOB] 提醒EMAIL發送結果: {}", isEmailSuccess ? "成功" : "失敗");
+		}
+
+		logger.info("[CRON JOB] health checking for ODM is finished");
+    }
+
+
 
 	@Scheduled(cron = "0 0/10 * * * ?")
 	public void doCronTest () {
@@ -31,17 +90,15 @@ public class OdmPostTesterService {
 	}
 	
 	public void doTest(String startDate, String endDate) {
-		System.out.println("[OdmPostTesterService] preparing to do ODM reuslt checking .....");
-		
-		String configPath = "D:\\MercuriesOdmChecking\\config.properties";
-		ConfigManager config = ConfigManager.getInstance(configPath);
-		TestManager testODM = new TestManager(config);
+		logger.info("[OdmPostTesterService] preparing to do ODM reuslt checking .....");
+
+		TestManager testODM = new TestManager(environment);
 
 		boolean testflag = testODM.getTestFlag();
 		String env = testODM.getEnv();
 
-		if (!testflag == true) {
-			System.out.println("Test is off");
+		if (!testflag) {
+			logger.info("Test is off");
 			return;
 		}
 
@@ -60,7 +117,7 @@ public class OdmPostTesterService {
 			testODM.closeTest();
 
 		}
-		System.out.println("-------------------------");
+		logger.info("-------------------------");
 	}
 
 }

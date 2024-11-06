@@ -16,9 +16,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.firsttech.insurance.odm_checking.domain.Policy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 public class TestManager {
-	private ConfigManager config;
+	private Environment environment;
 	private OdmTool odm = new OdmTool();
 	private boolean testflag = false;
 	private String env;
@@ -32,14 +35,14 @@ public class TestManager {
 	public int error = 0;
 
 
-	public TestManager(ConfigManager config) {
-		this.config = config;
-		this.testflag = config.getProperty("testing") != null;
-		this.env = config.getProperty("env").toLowerCase();
-		this.url = config.getProperty("db.url");
-		this.user = config.getProperty("db.username");
-		this.pwd = config.getProperty("db.password");
-		String filePath = config.getProperty("output.path");
+	public TestManager(Environment environment) {
+		this.environment = environment;
+		this.testflag = environment.getProperty("testing") != null;
+		this.env = environment.getProperty("env").toLowerCase();
+		this.url = environment.getProperty("db.url");
+		this.user = environment.getProperty("db.username");
+		this.pwd = environment.getProperty("db.password");
+		String filePath = environment.getProperty("output.path");
 		this.fileName = filePath + "-" + this.env + "-" + getToday() + ".csv";
 		this.date = getToday();
 	}
@@ -49,8 +52,8 @@ public class TestManager {
 	}
 	
 	public void createTest(String target, String startDate, String endDate) {
-		String odmApi = config.getProperty("odm." + target + ".origin");
-		String odmApiNew = config.getProperty("odm." + target + ".new");
+		String odmApi = environment.getProperty("odm." + target + ".origin");
+		String odmApiNew = environment.getProperty("odm." + target + ".new");
 		String status = null;
 		int sPass = 0;
 		int sFail = 0;
