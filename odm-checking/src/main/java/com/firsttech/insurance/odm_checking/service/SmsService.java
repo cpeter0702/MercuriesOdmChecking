@@ -22,6 +22,12 @@ public class SmsService {
     @Value("${spring.sms.phoneNum}")
     private String phoneNum;
 
+    @Value("${spring.sms.username}")
+    private String userName;
+
+    @Value("${spring.sms.password}")
+    private String password;
+
     @Autowired
     private Environment environment;
 
@@ -29,8 +35,8 @@ public class SmsService {
         boolean isSuccess = false;
 
         StringBuilder params = new StringBuilder();
-        params.append("username=username");
-        params.append("&password=password");
+        params.append("username=").append(userName);
+        params.append("&password=").append(password);
         params.append("&dstaddr=").append(phoneNum);
         params.append("&smbody=").append(this.getODMNotWorkingSmsContent());
 
