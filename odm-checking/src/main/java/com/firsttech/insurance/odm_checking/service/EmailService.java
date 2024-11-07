@@ -76,10 +76,11 @@ public class EmailService {
 
             // 寄信
             mailSender.send(mimeMessage);
-            isSuccess = true;
+
+            logger.info("[EmailService] Sending Email successful");
         }
         catch (MessagingException e) {
-            logger.info("Sending Email failed, error message is : " + e.getMessage());
+            logger.info("[EmailService] Sending Email failed, error message is : " + e.getMessage());
         }
 
         return isSuccess;

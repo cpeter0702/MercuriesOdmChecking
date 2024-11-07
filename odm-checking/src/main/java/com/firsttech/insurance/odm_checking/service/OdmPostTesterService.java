@@ -36,24 +36,28 @@ public class OdmPostTesterService {
 	@PostConstruct
 	public void runOnceAtStartup() {
 		sendEMail();
-		sendSMS();
+//		sendSMS();
 //		doCronTest();
 	}
 
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendSMS() {
-		logger.info("[OdmPostTesterService] preparing to send SMS .....");
+		logger.info("[CRON JOB] sendSMS: preparing to send SMS .....");
+		boolean isSMSSuccess = smsService.sendSMSTest();
+		logger.info("[CRON JOB] sendSMS: 提醒簡訊發送結果: {}", isSMSSuccess ? "成功" : "失敗");
 	}
 	
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void sendEMail() {
-		logger.info("[OdmPostTesterService] preparing to send EMAIL .....");
+		logger.info("[CRON JOB] sendEMail: preparing to send EMAIL .....");
+		boolean isEmailSuccess = emailService.sendMail();
+		logger.info("[CRON JOB] sendEMail: 提醒EMAIL發送結果: {}", isEmailSuccess ? "成功" : "失敗");
 	}
 
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void odmHealthChecking() {
 		boolean isAlive = false;
-		logger.info("[CRON JOB] start to do health checking for ODM");
+		logger.info("[CRON JOB] odmHealthChecking: start to do health checking for ODM");
         try {
 
 			String url = environment.getProperty("odm.health.check.origin");
@@ -62,15 +66,17 @@ public class OdmPostTesterService {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.OK.value()) {
 				isAlive = true;
-				logger.info("[CRON JOB] ODM is working: {}", returnBody);
+				logger.info("[CRON JOB] odmHealthChecking: ODM is working: {}", returnBody);
 			} else {
-				logger.info("[CRON JOB] ODM is NOT working: {}", returnBody);
+				logger.info("[CRON JOB] odmHealthChecking: ODM is NOT working: {}", returnBody);
 
 			}
 
         } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException e) {
-            throw new RuntimeException(e);
-        }
+            logger.info("[CRON JOB] odmHealthChecking: ODM ({}) Health Checking 發生錯誤, 錯誤訊息: {}",
+					environment.getProperty("spring.sms.phoneNum"),
+					e.getMessage());
+		}
 
 		if (!isAlive) {
 //			boolean isSMSSuccess = smsService.sendSMSTest();
