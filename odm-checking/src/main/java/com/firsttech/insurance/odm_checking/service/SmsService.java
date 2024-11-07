@@ -1,6 +1,5 @@
 package com.firsttech.insurance.odm_checking.service;
 
-import com.firsttech.insurance.odm_checking.service.utils.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

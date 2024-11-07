@@ -1,6 +1,5 @@
 package com.firsttech.insurance.odm_checking.service;
 
-import com.firsttech.insurance.odm_checking.service.utils.HttpUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
