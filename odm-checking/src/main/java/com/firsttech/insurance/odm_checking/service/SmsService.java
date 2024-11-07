@@ -24,11 +24,6 @@ public class SmsService {
 
     @Autowired
     private Environment environment;
-    public boolean sendSMSTest () {
-        logger.info("aaaa: " + environment.getProperty("odm.nb.origin"));
-        logger.info("phoneNum: " + phoneNum);
-        return true;
-    }
 
     public boolean sendSMS () {
         boolean isSuccess = false;

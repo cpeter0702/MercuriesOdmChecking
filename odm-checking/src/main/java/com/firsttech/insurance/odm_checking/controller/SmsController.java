@@ -15,7 +15,7 @@ public class SmsController {
 
     @GetMapping("/send-sms")
     public String sendEmail() {
-        smsService.sendSMSTest();
+        smsService.sendSMS();
         return "SMS sent successfully";
     }
 }
