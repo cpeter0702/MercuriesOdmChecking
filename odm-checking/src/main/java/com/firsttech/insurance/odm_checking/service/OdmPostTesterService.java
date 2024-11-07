@@ -35,8 +35,9 @@ public class OdmPostTesterService {
 
 	@PostConstruct
 	public void runOnceAtStartup() {
-		sendEMail();
-//		sendSMS();
+//		sendEMail();
+		sendSMS();
+		odmHealthChecking();
 //		doCronTest();
 	}
 
