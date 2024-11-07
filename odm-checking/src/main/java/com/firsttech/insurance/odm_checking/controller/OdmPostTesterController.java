@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.firsttech.insurance.odm_checking.service.EmailService;
+import com.firsttech.insurance.odm_checking.service.SmsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,10 @@ import com.firsttech.insurance.odm_checking.service.OdmPostTesterService;
 @RestController
 @RequestMapping("/api")
 public class OdmPostTesterController {
+	@Autowired
+	private SmsService smsService;
+	@Autowired
+	private EmailService emailService;
 	private OdmPostTesterService odmPostTesterService = new OdmPostTesterService();
 	private SimpleDateFormat sdfmt = new SimpleDateFormat("yyyyMMdd");
 	
@@ -41,14 +48,14 @@ public class OdmPostTesterController {
 	
 	@PostMapping("/sendSMS")
 	public String sendSMS() {
-		odmPostTesterService.sendSMS();
-		return "API calling sendSMS has done .....";
+		boolean isSuccess = smsService.sendSMS();
+		return "API calling sendSMS has done: " + (isSuccess ? "Success" : "Fail");
 	}
 	
 	@PostMapping("/sendEMail")
 	public String sendEMail() {
-		odmPostTesterService.sendEMail();
-		return "API calling sendEMail has done .....";
+		boolean isSuccess = emailService.sendMail();
+		return "API calling sendEMail has done: " + (isSuccess ? "Success" : "Fail");
 	}
 	
 	
